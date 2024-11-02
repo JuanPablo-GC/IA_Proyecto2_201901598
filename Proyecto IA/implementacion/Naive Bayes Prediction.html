@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción Naive Bayes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            margin-top: 2rem;
+            color: #007bff;
+        }
+
+        .container {
+            margin-top: 3rem;
+        }
+
+        .shadow-lg {
+            box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.2);
+        }
+
+        .rounded {
+            border-radius: 0.5rem;
+        }
+
+        table {
+            margin-top: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        #btn {
+            margin-top: 1rem;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: #6c757d;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 class="display-1 text-center">Predicción Naive Bayes</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="shadow-lg p-4 bg-white rounded">
+                    <h3 class="text-center">Tabla de Valores Anteriores</h3>
+                    <table id="tabla" class="table table-striped">
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="shadow-lg p-4 bg-white rounded">
+                    <h3 class="text-center">Ingresa Valores Deseados</h3>
+                    <form action="#">
+                        <div class="input-group">
+                            <label for="lunes" class="form-label">Porcentaje Lunes:</label>
+                            <input id="lunes" type="text" class="form-control" placeholder="Porcentaje Lunes" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="martes" class="form-label">Porcentaje Martes:</label>
+                            <input id="martes" type="text" class="form-control" placeholder="Porcentaje Martes" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="miercoles" class="form-label">Porcentaje Miércoles:</label>
+                            <input id="miercoles" type="text" class="form-control" placeholder="Porcentaje Miércoles" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="jueves" class="form-label">Porcentaje Jueves:</label>
+                            <input id="jueves" type="text" class="form-control" placeholder="Porcentaje Jueves" required>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="btn">Calcular Predicción</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col">
+                <div class="shadow-lg p-4 bg-white rounded">
+                    <h3 class="text-center">Respuesta Día Viernes Semana 8</h3>
+                    <p id="Resp" class="text-center"></p>
+                    <table id="tabla2" class="table table-striped">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var datos = [
+            ["Semana 1", [50, 60, 80, 92], "LLUVIA"],
+            ["Semana 2", [9, 8, 8, 52], "SOLEADO"],
+            ["Semana 3", [50, 50, 50, 40], "NUBLADO"],
+            ["Semana 4", [90, 85, 75, 96], "LLUVIA"],
+            ["Semana 5", [90, 85, 75, 70], "LLUVIA"],
+            ["Semana 6", [90, 15, 20, 13], "SOLEADO"],
+            ["Semana 7", [45, 65, 50, 48], "NUBLADO"],
+        ];
+
+        let content = `<thead>
+                <tr>
+                    <th>Semana #</th>
+                    <th>Lunes %(lluvia)</th>
+                    <th>Martes %(lluvia)</th>
+                    <th>Miercoles %(lluvia)</th>
+                    <th>Jueves %(lluvia)</th>
+                    <th>Viernes %(lluvia)</th>
+                </tr>
+            </thead>
+            <tbody>`;
+        for (let i = 0; i < datos.length; i++) {
+            content += `<tr>
+                            <th scope="row">${i + 1}</th> 
+                            <td>${datos[i][1][0]}</td> 
+                            <td>${datos[i][1][1]}</td> 
+                            <td>${datos[i][1][2]}</td> 
+                            <td>${datos[i][1][3]}</td>
+                            <td>${datos[i][2]}</td>
+                        </tr>`;
+        }
+        document.getElementById('tabla').innerHTML = content;
+
+        document.getElementById('btn').onclick = function () {
+            if (document.getElementById('lunes').value != "" &&
+                document.getElementById('martes').value != "" &&
+                document.getElementById('miercoles').value != "" &&
+                document.getElementById('jueves').value != "") {
+
+                var newIndividuo = ["Semana 8", [
+                    Number(document.getElementById('lunes').value),
+                    Number(document.getElementById('martes').value),
+                    Number(document.getElementById('miercoles').value),
+                    Number(document.getElementById('jueves').value)
+                ]];
+
+                let Manhattan = predecirCluster(1, datos, newIndividuo);
+                let Euclidiana = predecirCluster(2, datos, newIndividuo);
+
+                let content2 = `<thead>
+                                <tr>
+                                    <th>Manhattan</th>
+                                    <th>Euclidiana</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>${Manhattan}</td>
+                                    <td>${Euclidiana}</td>
+                                </tr>
+                                </tbody>`;
+
+                document.getElementById("tabla2").innerHTML = content2;
+            }
+        }
+
+        // Funciones de predicción
+        function predecirCluster(metrica, datos, nuevo) {
+            let distances = [];
+
+            for (let i = 0; i < datos.length; i++) {
+                let distance;
+                if (metrica === 1) {
+                    distance = calcularManhattan(datos[i][1], nuevo[1]);
+                } else {
+                    distance = calcularEuclidiana(datos[i][1], nuevo[1]);
+                }
+                distances.push({ distancia: distance, clase: datos[i][2] });
+            }
+
+            // Ordenar las distancias
+            distances.sort((a, b) => a.distancia - b.distancia);
+
+            // Devolver la clase de la predicción
+            return distances[0].clase;
+        }
+
+        function calcularManhattan(p1, p2) {
+            return p1.reduce((sum, value, index) => sum + Math.abs(value - p2[index]), 0);
+        }
+
+        function calcularEuclidiana(p1, p2) {
+            return Math.sqrt(p1.reduce((sum, value, index) => sum + Math.pow(value - p2[index], 2), 0));
+        }
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,82 @@
+<html>
+<head>
+<script type="text/javascript" src="../dist/tytus.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+<h2>Regresion Lineal</h2>
+<input type="file" id="csvFileInput" accept=".csv" onchange="loadCSV()" />
+<p id="log"></p>    
+<div id="chart_div" style="width: 900px; height: 500px;"></div>
+
+<script type="text/javascript">
+    // Variables para almacenar los datos de entrenamiento
+    var xTrain = [];
+    var yTrain = [];
+    var yPredict = [];
+
+    // Función para leer el CSV
+    function loadCSV() {
+        const fileInput = document.getElementById("csvFileInput").files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const csvData = e.target.result;
+            processCSVData(csvData);
+        };
+        reader.readAsText(fileInput);
+    }
+
+    // Procesa el contenido del CSV y lo convierte en arrays
+    function processCSVData(csvData) {
+        const rows = csvData.split("\n");
+        xTrain = [];
+        yTrain = [];
+        
+        rows.forEach((row, index) => {
+            const columns = row.split(",");
+            if (columns.length >= 2 && index > 0) { // Salta la primera fila si tiene encabezados
+                xTrain.push(parseFloat(columns[0])); // Columna 1 -> xTrain
+                yTrain.push(parseFloat(columns[1])); // Columna 2 -> yTrain
+            }
+        });
+
+        // Realiza el ajuste de regresión lineal y genera la predicción
+        performLinearRegression();
+    }
+
+    function performLinearRegression() {
+        // Crea y ajusta el modelo de regresión lineal
+        var linear = new LinearRegression();
+        linear.fit(xTrain, yTrain);
+        yPredict = linear.predict(xTrain);
+
+        // Muestra los datos en el log
+        document.getElementById("log").innerHTML = 
+            `<br>X Train: ${xTrain}<br>Y Train: ${yTrain}<br>Y Predict: ${yPredict}`;
+
+        // Dibuja la gráfica con los datos
+        drawChart();
+    }
+
+    // Dibuja el gráfico usando Google Charts
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var dataArray = [['x', 'yTrain', 'yPredict']];
+        for (let i = 0; i < xTrain.length; i++) {
+            dataArray.push([xTrain[i], yTrain[i], yPredict[i]]);
+        }
+
+        var data = google.visualization.arrayToDataTable(dataArray);
+        var options = {
+            seriesType : 'scatter',
+            series: {1: {type: 'line'}}
+        };  
+        var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+        chart.draw(data, options);         
+    }    
+</script>
+</body>
+</html>

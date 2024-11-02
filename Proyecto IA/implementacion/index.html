@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Principal IA</title>
+    <script>
+        // Función para cambiar el contenido del iframe
+        function cambiarIframe() {
+            // Obtiene el valor seleccionado del select
+            const archivoSeleccionado = document.getElementById("selectorArchivos").value;
+            // Cambia el src del iframe al archivo seleccionado
+            document.getElementById("contenidoIframe").src = archivoSeleccionado;
+        }
+    </script>
+</head>
+<body>
+    <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2F3.bp.blogspot.com%2F-9x0rfIDiBKI%2FW4AET2j1JzI%2FAAAAAAAAD60%2FpU0TImyS0_Yqb17vfYOWfnYy_rplqNlTwCLcBGAs%2Fs1600%2Fingenieria.JPG&f=1&nofb=1&ipt=be91855801fdbbb298fc534269a59f912fdeaa0b502a37ce66a53fab6da6dfeb&ipo=images" alt="Descripción de la imagen" width="40%" height="auto" style="display: block; margin: 0 auto;">
+
+    <h1>Inteligencia Artificial Proyecto 2</h1>
+    <h2>Juan Pablo García Ceballos - 201901598:</h2>
+    
+    <!-- Select para elegir el archivo HTML a mostrar en el iframe -->
+    <label for="selectorArchivos">Seleccione una algoritmo:</label>
+    <select id="selectorArchivos" onchange="cambiarIframe()">
+        <option value="">-- Seleccione una opción --</option>
+        <option value="regresion_lineal.html">Regresión Lineal</option>
+        <option value="regresion_polinomial.html">Regresión Polinomial</option>
+        <option value="Neuronal Network.html">Redes Neuronales</option>
+        <option value="kmeans.html">K-Means</option>
+        <option value="Naive Bayes Prediction.html">Naive Bayes</option>
+        <option value="arbol de decision.html">Árbol de Decisión</option>
+        
+    </select>
+    
+    <br></br>
+    <!-- Iframe donde se mostrará el contenido del archivo seleccionado -->
+    <iframe id="contenidoIframe" src="" width="100%" height="500px"></iframe>
+</body>
+</html>
